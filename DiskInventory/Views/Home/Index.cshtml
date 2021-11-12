@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Disk Inventory Manger</h1>
+    <div>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a asp-area="" asp-controller="Artist" asp-action="Index">Manage Artists</a>
+            </li>
+            <li class="list-group-item">
+                <a asp-area="" asp-controller="Borrower" asp-action="Index">Manage Borrowers</a>
+            </li>
+            <li class="list-group-item">
+                <a asp-area="" asp-controller="Disk" asp-action="Index">Manage Disks</a>
+            </li>
+        </ul>
+    </div>
+</div>
