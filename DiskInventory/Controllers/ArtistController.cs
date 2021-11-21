@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//##########################################################################
+//#   DATE          NAME                DESC
+//#   11/12/2021    Luke Brandt         Initial Deployment
+//#   11/19/2021    //                  Added methods for adding editing and deleting artist.  
+//#
+//#
+//#
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +24,60 @@ namespace DiskInventory.Controllers
         public IActionResult Index()
         {
             List<Artist> artists = context.Artists.OrderBy(a => a.ArtistName).ToList();
+            
             return View(artists);
         }
+        [HttpGet]
+        public IActionResult Add()
+        {
+            ViewBag.Action = "Add";
+            ViewBag.ArtistTypes = context.ArtistTypes.OrderBy(t => t.ArtistTypeDescription).ToList();
+            return View("Edit", new Artist());
+        }
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            ViewBag.Action = "Edit";
+            ViewBag.ArtistTypes = context.ArtistTypes.OrderBy(t => t.ArtistTypeDescription).ToList();
+            var artist = context.Artists.Find(id);
+            return View(artist);
+        }
+        [HttpPost]
+        public IActionResult Edit(Artist artist)
+        {
+            if (ModelState.IsValid)
+            {
+                if(artist.ArtistId == 0) // if hidden view is = to zero add artist
+                {
+                    context.Artists.Add(artist);
+                }
+                else //if hidden view has a value edit the existing artist
+                {
+                    context.Artists.Update(artist);
+                }
+                context.SaveChanges();
+                return RedirectToAction("Index", "Artist");
+            }
+            else
+            {
+                ViewBag.Action = (artist.ArtistId == 0) ? "Add" : "Edit";
+                ViewBag.ArtistTypes = context.ArtistTypes.OrderBy(t => t.ArtistTypeDescription).ToList();
+                return View(artist);
+            }
+        }
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var artist = context.Artists.Find(id);
+            return View(artist);
+        }
+        [HttpPost]
+        public IActionResult Delete(Artist artist)
+        {
+            context.Artists.Remove(artist);
+            context.SaveChanges();
+            return RedirectToAction("Index", "Artist");
+        }
+       
     }
 }

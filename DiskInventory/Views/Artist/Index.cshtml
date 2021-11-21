@@ -4,6 +4,7 @@
 }
 
 <h1>@ViewBag.Title</h1>
+<a asp-controller="Artist" asp-action="Add" class="text-light">Add An Artist</a>
 <table class="table table-dark">
     <thead>
         <tr>
@@ -19,6 +20,8 @@
             <td>@artist.ArtistId</td>
             <td>@artist.ArtistName</td>
             <td>@artist.ArtistTypeId</td>
+            <td><a asp-controller="Artist" asp-action="Edit" asp-route-id="@artist.ArtistId" class="btn btn-success">Edit</a></td>
+            <td><a asp-controller="Artist" asp-action="Delete" asp-route-id="@artist.ArtistId" class="btn btn-primary">Delete</a></td>
         </tr>
             }
     </tbody>
