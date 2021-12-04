@@ -19,7 +19,7 @@
         <tr>
             <td>@artist.ArtistId</td>
             <td>@artist.ArtistName</td>
-            <td>@artist.ArtistTypeId</td>
+            <td>@artist.ArtistType.ArtistTypeDescription</td>
             <td><a asp-controller="Artist" asp-action="Edit" asp-route-id="@artist.ArtistId" class="btn btn-success">Edit</a></td>
             <td><a asp-controller="Artist" asp-action="Delete" asp-route-id="@artist.ArtistId" class="btn btn-primary">Delete</a></td>
         </tr>

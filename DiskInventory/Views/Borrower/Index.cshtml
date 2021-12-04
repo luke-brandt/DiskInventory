@@ -3,6 +3,7 @@
     ViewBag.Title = "Borrower Manager";
 }
 <h1>@ViewBag.Title</h1>
+<a asp-controller="Borrower" asp-action="Add" class="text-light">Add A Borrower</a>
 <table class="table table-dark">
     <thead>
         <tr>
@@ -20,6 +21,8 @@
             <td>@borrower.BorrowerLname</td>
             <td>@borrower.BorrowerFname</td>
             <td>@borrower.BorrowerPhone</td>
+            <td><a asp-controller="Borrower" asp-action="Edit" asp-route-id="@borrower.BorrowerId" class="btn btn-success">Edit</a></td>
+            <td><a asp-controller="Borrower" asp-action="Delete" asp-route-id="@borrower.BorrowerId" class="btn btn-primary">Delete</a></td>
         </tr>
         }
     </tbody>

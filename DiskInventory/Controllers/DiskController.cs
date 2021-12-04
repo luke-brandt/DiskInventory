@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiskInventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiskInventory.Controllers
 {
@@ -23,7 +24,11 @@ namespace DiskInventory.Controllers
         }
         public IActionResult Index()
         {
-            List<Disk> disks = context.Disks.OrderBy(d => d.DiskName).ToList();
+            //List<Disk> disks = context.Disks.OrderBy(d => d.DiskName).ToList();
+            var disks = context.Disks.OrderBy(d => d.DiskName).
+                Include(g => g.Genre).
+                Include(s => s.Status).
+                Include(d => d.DiskType).ToList();
             return View(disks);
         }
         [HttpGet]
@@ -33,7 +38,9 @@ namespace DiskInventory.Controllers
             ViewBag.DiskTypes = context.DiskTypes.OrderBy(t => t.DiskTypeDescription).ToList();
             ViewBag.DiskStatuses = context.Statuses.OrderBy(s => s.StatusDescription).ToList();
             ViewBag.DiskGenres = context.Genres.OrderBy(s => s.GenreDescription).ToList();
-            return View("Edit", new Disk());
+            Disk newdisk = new Disk();
+            newdisk.ReleaseDate = DateTime.Today;
+            return View("Edit", newdisk);
         }
         [HttpGet]
         public IActionResult Edit(int id)

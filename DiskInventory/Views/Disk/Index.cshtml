@@ -10,8 +10,8 @@
         <tr>
             <th>Disk Id</th>
             <th>Disk Name</th>
-            <th>Genre Id</th>
-            <th>Disk Type Id</th>
+            <th>Genre</th>
+            <th>Disk Type</th>
             <th>Release Date</th>
             <th>Disk Status</th>
         </tr>
@@ -22,10 +22,10 @@
         <tr>
             <td>@disk.DiskId</td>
             <td>@disk.DiskName</td>
-            <td>@disk.GenreId</td>
-            <td>@disk.DiskTypeId</td>
+            <td>@disk.Genre.GenreDescription</td>
+            <td>@disk.DiskType.DiskTypeDescription</td>
             <td>@disk.ReleaseDate</td>
-            <td>@disk.StatusId</td>
+            <td>@disk.Status.StatusDescription</td>
             <td><a asp-controller="Disk" asp-action="Edit" asp-route-id="@disk.DiskId" class="btn btn-success">Edit</a></td>
             <td><a asp-controller="Disk" asp-action="Delete" asp-route-id="@disk.DiskId" class="btn btn-primary">Delete</a></td>
         </tr>

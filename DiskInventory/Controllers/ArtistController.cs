@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiskInventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiskInventory.Controllers
 {
@@ -23,9 +24,10 @@ namespace DiskInventory.Controllers
         }
         public IActionResult Index()
         {
-            List<Artist> artists = context.Artists.OrderBy(a => a.ArtistName).ToList();
-            
-            return View(artists);
+            // List<Artist> artists = context.Artists.OrderBy(a => a.ArtistName).ToList();
+            var artist = context.Artists.OrderBy(a => a.ArtistName).
+                Include(at => at.ArtistType).ToList();
+            return View(artist);
         }
         [HttpGet]
         public IActionResult Add()

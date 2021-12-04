@@ -1,0 +1,31 @@
+﻿@model List<DiskHasBorrower>
+@{
+    ViewBag.Title = "Checkout Manager";
+}
+
+<h1>@ViewBag.Title</h1>
+<a asp-controller="DiskHasBorrower" asp-action="Add" class="text-light">Add A Checkout</a>
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th>Disk Name</th>
+            <th>Borrower Last Name</th>
+            <th>Borrower First Name</th>
+            <th>Borrowed Date</th>
+            <th>Returned Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var diskhasborrower in Model)
+        {
+            <tr>
+                <td>@diskhasborrower.Disk.DiskName</td>
+                <td>@diskhasborrower.Borrower.BorrowerLname</td>
+                <td>@diskhasborrower.Borrower.BorrowerFname</td>
+                <td>@diskhasborrower.BorrowedDate.ToString("dd MMM yyyy")</td>
+                <td>@diskhasborrower.ReturnedDate?.ToString("dd MMM yyyy")</td>
+                <td><a asp-controller="DiskHasBorrower" asp-action="Edit" asp-route-id="@diskhasborrower.DiskHasBorrowerId" class="btn btn-success">Edit</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
