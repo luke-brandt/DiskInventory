@@ -58,29 +58,40 @@ namespace DiskInventory.Controllers
         {
             if (ModelState.IsValid)
             {
-              string returnedDate = diskhasborrower.ReturnedDate.ToString();
-              returnedDate = (returnedDate == "") ? null : diskhasborrower.ReturnedDate.ToString();
-                
-                if (diskhasborrower.DiskHasBorrowerId == 0)
+                if (diskhasborrower.BorrowedDate > diskhasborrower.ReturnedDate)
                 {
-                    //context.DiskHasBorrowers.Add(diskhasborrower);
-                     
-                    context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_insert @p0, @p1, @p2, @p3",
-                        parameters: new[] { diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
-                            diskhasborrower.BorrowerId.ToString(), returnedDate });
+                    ModelState.AddModelError("", "Date of disk returned cannot be before borrowed date");
+                    ViewBag.Action = (diskhasborrower.DiskHasBorrowerId == 0) ? "Add" : "Edit";
+                    ViewBag.Action = "Add";
+                    ViewBag.DiskBorrowers = context.Borrowers.OrderBy(b => b.BorrowerLname).ToList();
+                    ViewBag.Disks = context.Disks.OrderBy(d => d.DiskName).ToList();
+                    return View(diskhasborrower);
                 }
                 else
                 {
-                    //context.DiskHasBorrowers.Update(diskhasborrower);
-                    context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_update @p0, @p1, @p2, @p3, @p4",
-                        parameters: new[] { diskhasborrower.DiskHasBorrowerId.ToString(), diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
+                    string returnedDate = diskhasborrower.ReturnedDate.ToString();
+                    returnedDate = (returnedDate == "") ? null : diskhasborrower.ReturnedDate.ToString();
+
+                    if (diskhasborrower.DiskHasBorrowerId == 0)
+                    {
+                        //context.DiskHasBorrowers.Add(diskhasborrower);
+
+                        context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_insert @p0, @p1, @p2, @p3",
+                            parameters: new[] { diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
                             diskhasborrower.BorrowerId.ToString(), returnedDate });
-                }
+                    }
+                    else
+                    {
+                        //context.DiskHasBorrowers.Update(diskhasborrower);
+                        context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_update @p0, @p1, @p2, @p3, @p4",
+                            parameters: new[] { diskhasborrower.DiskHasBorrowerId.ToString(), diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
+                            diskhasborrower.BorrowerId.ToString(), returnedDate });
+                    }
                     //context.SaveChanges();
                     return RedirectToAction("Index", "DiskHasBorrower");
                 }
-                else
-                {
+            }
+            else{
                     ViewBag.Action = (diskhasborrower.DiskHasBorrowerId == 0) ? "Add" : "Edit";
                     ViewBag.Action = "Add";
                     ViewBag.DiskBorrowers = context.Borrowers.OrderBy(b => b.BorrowerLname).ToList();
@@ -89,7 +100,7 @@ namespace DiskInventory.Controllers
                     newcheckout.BorrowedDate = DateTime.Today;
                     return View(diskhasborrower);
                 }
-            }
-        }
+        }// end edit action
+    }//end class
     
 }
