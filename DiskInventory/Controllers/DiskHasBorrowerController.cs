@@ -1,7 +1,7 @@
 ﻿//##########################################################################
 //#   DATE          NAME                DESC
 //#   12/3/2021    Luke Brandt         Initial Deployment
-//#   
+//#   12/6/2021    Luke Brandt         Add use of stored procedures
 //#
 //#
 //#
@@ -38,7 +38,7 @@ namespace DiskInventory.Controllers
             ViewBag.Disks = context.Disks.OrderBy(d => d.DiskName).ToList();
             DiskHasBorrower newcheckout = new DiskHasBorrower();
             newcheckout.BorrowedDate = DateTime.Today;
-           
+
             return View("Edit", newcheckout);
         }
         [HttpGet]
@@ -58,27 +58,38 @@ namespace DiskInventory.Controllers
         {
             if (ModelState.IsValid)
             {
+              string returnedDate = diskhasborrower.ReturnedDate.ToString();
+              returnedDate = (returnedDate == "") ? null : diskhasborrower.ReturnedDate.ToString();
+                
                 if (diskhasborrower.DiskHasBorrowerId == 0)
                 {
-                    context.DiskHasBorrowers.Add(diskhasborrower);
+                    //context.DiskHasBorrowers.Add(diskhasborrower);
+                     
+                    context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_insert @p0, @p1, @p2, @p3",
+                        parameters: new[] { diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
+                            diskhasborrower.BorrowerId.ToString(), returnedDate });
                 }
                 else
                 {
-                    context.DiskHasBorrowers.Update(diskhasborrower);
+                    //context.DiskHasBorrowers.Update(diskhasborrower);
+                    context.Database.ExecuteSqlRaw("execute sp_disk_has_borrower_update @p0, @p1, @p2, @p3, @p4",
+                        parameters: new[] { diskhasborrower.DiskHasBorrowerId.ToString(), diskhasborrower.BorrowedDate.ToString(), diskhasborrower.DiskId.ToString(),
+                            diskhasborrower.BorrowerId.ToString(), returnedDate });
                 }
-                context.SaveChanges();
-                return RedirectToAction("Index", "DiskHasBorrower");
-            }
-            else
-            {
-                ViewBag.Action = (diskhasborrower.DiskHasBorrowerId == 0) ? "Add" : "Edit";
-                ViewBag.Action = "Add";
-                ViewBag.DiskBorrowers = context.Borrowers.OrderBy(b => b.BorrowerLname).ToList();
-                ViewBag.Disks = context.Disks.OrderBy(d => d.DiskName).ToList();
-                DiskHasBorrower newcheckout = new DiskHasBorrower();
-                newcheckout.BorrowedDate = DateTime.Today;
-                return View(diskhasborrower);
+                    //context.SaveChanges();
+                    return RedirectToAction("Index", "DiskHasBorrower");
+                }
+                else
+                {
+                    ViewBag.Action = (diskhasborrower.DiskHasBorrowerId == 0) ? "Add" : "Edit";
+                    ViewBag.Action = "Add";
+                    ViewBag.DiskBorrowers = context.Borrowers.OrderBy(b => b.BorrowerLname).ToList();
+                    ViewBag.Disks = context.Disks.OrderBy(d => d.DiskName).ToList();
+                    DiskHasBorrower newcheckout = new DiskHasBorrower();
+                    newcheckout.BorrowedDate = DateTime.Today;
+                    return View(diskhasborrower);
+                }
             }
         }
-    }
+    
 }

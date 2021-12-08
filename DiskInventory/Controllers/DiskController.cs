@@ -2,7 +2,7 @@
 //#   DATE          NAME                DESC
 //#   11/16/2021    Luke Brandt         Initial Deployment
 //#   11/19/2021    //                  Added methods for adding editing and deleting artist.
-//#
+//#   12/8/2021     //                  added use of stored procedures
 //#
 //#
 using Microsoft.AspNetCore.Mvc;
@@ -59,13 +59,17 @@ namespace DiskInventory.Controllers
             {
                 if(disk.DiskId == 0)
                 {
-                    context.Disks.Add(disk);
+                    //context.Disks.Add(disk);
+                    context.Database.ExecuteSqlRaw("sp_disk_insert @p0, @p1, @p2, @p3, @p4",
+                        parameters: new[] {disk.DiskName, disk.GenreId.ToString(), disk.DiskTypeId.ToString(), disk.StatusId.ToString(), disk.ReleaseDate.ToString() });
                 }
                 else
                 {
-                    context.Disks.Update(disk);
+                    //context.Disks.Update(disk);
+                    context.Database.ExecuteSqlRaw("sp_disk_update @p0, @p1, @p2, @p3, @p4, @p5",
+                        parameters: new[] { disk.DiskId.ToString(), disk.DiskName, disk.GenreId.ToString(), disk.DiskTypeId.ToString(), disk.StatusId.ToString(), disk.ReleaseDate.ToString() });
                 }
-                context.SaveChanges();
+                //context.SaveChanges();
                 return RedirectToAction("Index", "Disk");
             }
             else
@@ -86,9 +90,21 @@ namespace DiskInventory.Controllers
         [HttpPost]
         public IActionResult Delete(Disk disk)
         {
-            context.Disks.Remove(disk);
-            context.SaveChanges();
-            return RedirectToAction("Index", "Disk");
+            //context.Disks.Remove(disk);
+            //context.SaveChanges();
+            var hasBorrower = context.DiskHasBorrowers.Find(disk.DiskId);
+            if (hasBorrower == null)
+            {
+                context.Database.ExecuteSqlRaw("execute sp_disk_delete @p0",
+                                parameters: new[] { disk.DiskId.ToString() });
+                return RedirectToAction("Index", "Disk");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Disk exists on checkout log. Unable to delete disk from database.");
+                return View(disk);
+            }
+            
         }
     }
 }

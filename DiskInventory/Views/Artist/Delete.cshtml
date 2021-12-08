@@ -4,7 +4,9 @@
 }
 <h2>Confirm Delete?</h2>
 <h3>Are you sure you want to delete @Model.ArtistName from the database?</h3>
+<p>Note: If artist exists on checkout history they will not be deleted from database.</p>
 <form asp-action="Delete" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger bg-dark"></div>
     <input type="hidden" asp-for="ArtistId" />
     <button type="Submit" class="btn btn-danger">Delete</button>
     <a asp-controller="Artist" asp-action="Index" class="btn btn-primary">Cancel</a>

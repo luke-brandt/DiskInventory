@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
+
 #nullable disable
 
 namespace DiskInventory.Models
@@ -10,7 +11,10 @@ namespace DiskInventory.Models
     {
         public int DiskHasBorrowerId { get; set; }
         [Required]
+        
         public DateTime BorrowedDate { get; set; }
+
+      
         public DateTime? ReturnedDate { get; set; }
         [Required]
         public int DiskId { get; set; }
